@@ -106,7 +106,6 @@ bool BotanEDDSA::sign(PrivateKey* privateKey, const ByteString& dataToSign,
 	{
 		BotanRNG* rng = (BotanRNG*)BotanCryptoFactory::i()->getRNG();
 		signer = new Botan::PK_Signer(*botanKey, *rng->getRNG(), emsa);
-		// Should we add DISABLE_FAULT_PROTECTION? Makes this operation faster.
 	}
 	catch (...)
 	{

@@ -66,28 +66,14 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 			return false;
 		}
 
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		Botan::secure_vector<Botan::byte> data(in.size());
 		memcpy(data.data(), in.const_byte_str(), in.size());
 		Botan::secure_vector<Botan::byte> wrapped;
-#else
-		Botan::MemoryVector<Botan::byte> data(in.size());
-		memcpy(data.begin(), in.const_byte_str(), in.size());
-		Botan::SecureVector<Botan::byte> wrapped;
-#endif
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
-#if BOTAN_VERSION_CODE < BOTAN_VERSION_CODE_FOR(1,11,14)
-		Botan::Algorithm_Factory& af = Botan::global_state().algorithm_factory();
-		try
-		{
-			wrapped = Botan::rfc3394_keywrap(data, botanKey, af);
-		}
-#else
 		try
 		{
 			wrapped = Botan::rfc3394_keywrap(data, botanKey);
 		}
-#endif
 		catch (...)
 		{
 			ERROR_MSG("AES key wrap failed");
@@ -95,11 +81,7 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 			return false;
 		}
 		out.resize(wrapped.size());
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		memcpy(&out[0], wrapped.data(), out.size());
-#else
-		memcpy(&out[0], wrapped.begin(), out.size());
-#endif
 
 		return  true;
 	}
@@ -107,28 +89,14 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 	else if (mode == SymWrap::AES_KEYWRAP_PAD)
 	{
 		// RFC 5649 AES key wrap with pad
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		Botan::secure_vector<Botan::byte> data(in.size());
 		memcpy(data.data(), in.const_byte_str(), in.size());
 		Botan::secure_vector<Botan::byte> wrapped;
-#else
-		Botan::MemoryVector<Botan::byte> data(in.size());
-		memcpy(data.begin(), in.const_byte_str(), in.size());
-		Botan::SecureVector<Botan::byte> wrapped;
-#endif
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
-#if BOTAN_VERSION_CODE < BOTAN_VERSION_CODE_FOR(1,11,14)
-		Botan::Algorithm_Factory& af = Botan::global_state().algorithm_factory();
-		try
-		{
-			wrapped = Botan::rfc5649_keywrap(data, botanKey, af);
-		}
-#else
 		try
 		{
 			wrapped = Botan::rfc5649_keywrap(data, botanKey);
 		}
-#endif
 		catch (...)
 		{
 			ERROR_MSG("AES key wrap failed");
@@ -136,11 +104,7 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 			return false;
 		}
 		out.resize(wrapped.size());
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		memcpy(&out[0], wrapped.data(), out.size());
-#else
-		memcpy(&out[0], wrapped.begin(), out.size());
-#endif
 
 		return  true;
 	}

@@ -43,7 +43,6 @@
 #include <botan/der_enc.h>
 #include <botan/asn1_oid.h>
 #include <botan/oids.h>
-#include <botan/pkcs8.h>
 #include <botan/version.h>
 #include <botan/curve25519.h>
 #include <botan/ed25519.h>

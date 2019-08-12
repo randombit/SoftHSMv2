@@ -32,14 +32,13 @@
 
 #include "config.h"
 #include "BotanSHA256.h"
-#include <botan/sha2_32.h>
 
 int BotanSHA256::getHashSize()
 {
 	return 32;
 }
 
-Botan::HashFunction* BotanSHA256::getHash() const
+const char* BotanSHA256::getHashName() const
 {
-	return new Botan::SHA_256();
+        return "SHA-256";
 }
