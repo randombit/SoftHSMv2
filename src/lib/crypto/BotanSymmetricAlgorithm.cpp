@@ -39,12 +39,8 @@
 #include <iostream>
 
 #include <botan/symkey.h>
-#include <botan/botan.h>
 #include <botan/version.h>
-
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,14)
-#include <botan/key_filt.h>
-#endif
+#include <botan/filters.h>
 
 #if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(2,0,0)
 #include "Botan_ecb.h"

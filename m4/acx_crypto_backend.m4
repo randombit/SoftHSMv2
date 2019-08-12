@@ -124,7 +124,7 @@ AC_DEFUN([ACX_CRYPTO_BACKEND],[
 	elif test "x${crypto_backend}" = "xbotan"; then
 		AC_MSG_RESULT(Botan)
 
-		ACX_BOTAN(1,10,0)
+		ACX_BOTAN(2,0,0)
 
 		CRYPTO_INCLUDES=$BOTAN_CFLAGS
 		CRYPTO_LIBS=$BOTAN_LIBS
@@ -155,10 +155,6 @@ AC_DEFUN([ACX_CRYPTO_BACKEND],[
 
 		if test	"x${enable_fips}" = "xyes"; then
 			AC_MSG_ERROR([Botan does not support FIPS 140-2 mode])
-		fi
-
-		if test "x${BOTAN_VERSION_MAJOR}" = "x1" -a "x${BOTAN_VERSION_MINOR}" = "x10"; then
-			ACX_BOTAN_GNUMP
 		fi
 
 		ACX_BOTAN_RFC5649

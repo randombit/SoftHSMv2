@@ -36,10 +36,6 @@
 #include <botan/rfc3394.h>
 #include <botan/version.h>
 
-#if BOTAN_VERSION_CODE < BOTAN_VERSION_CODE_FOR(1,11,14)
-#include <botan/libstate.h>
-#endif
-
 // Wrap/Unwrap keys
 bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out)
 {
@@ -186,28 +182,14 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 			return false;
 		}
 
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		Botan::secure_vector<Botan::byte> wrapped(in.size());
 		memcpy(wrapped.data(), in.const_byte_str(), in.size());
 		Botan::secure_vector<Botan::byte> unwrapped;
-#else
-		Botan::MemoryVector<Botan::byte> wrapped(in.size());
-		memcpy(wrapped.begin(), in.const_byte_str(), in.size());
-		Botan::SecureVector<Botan::byte> unwrapped;
-#endif
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
-#if BOTAN_VERSION_CODE < BOTAN_VERSION_CODE_FOR(1,11,14)
-		Botan::Algorithm_Factory& af = Botan::global_state().algorithm_factory();
-		try
-		{
-			unwrapped = Botan::rfc3394_keyunwrap(wrapped, botanKey, af);
-		}
-#else
 		try
 		{
 			unwrapped = Botan::rfc3394_keyunwrap(wrapped, botanKey);
 		}
-#endif
 		catch (...)
 		{
 			ERROR_MSG("AES key unwrap failed");
@@ -215,11 +197,7 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 			return false;
 		}
 		out.resize(unwrapped.size());
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		memcpy(&out[0], unwrapped.data(), out.size());
-#else
-		memcpy(&out[0], unwrapped.begin(), out.size());
-#endif
 
 		return  true;
 	}
@@ -240,28 +218,14 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 			return false;
 		}
 
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		Botan::secure_vector<Botan::byte> wrapped(in.size());
 		memcpy(wrapped.data(), in.const_byte_str(), in.size());
 		Botan::secure_vector<Botan::byte> unwrapped;
-#else
-		Botan::MemoryVector<Botan::byte> wrapped(in.size());
-		memcpy(wrapped.begin(), in.const_byte_str(), in.size());
-		Botan::SecureVector<Botan::byte> unwrapped;
-#endif
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
-#if BOTAN_VERSION_CODE < BOTAN_VERSION_CODE_FOR(1,11,14)
-		Botan::Algorithm_Factory& af = Botan::global_state().algorithm_factory();
-		try
-		{
-			unwrapped = Botan::rfc5649_keyunwrap(wrapped, botanKey, af);
-		}
-#else
 		try
 		{
 			unwrapped = Botan::rfc5649_keyunwrap(wrapped, botanKey);
 		}
-#endif
 		catch (...)
 		{
 			ERROR_MSG("AES key unwrap failed");
@@ -269,11 +233,7 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 			return false;
 		}
 		out.resize(unwrapped.size());
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		memcpy(&out[0], unwrapped.data(), out.size());
-#else
-		memcpy(&out[0], unwrapped.begin(), out.size());
-#endif
 
 		return  true;
 	}
