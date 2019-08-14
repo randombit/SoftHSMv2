@@ -41,6 +41,7 @@
 #include <botan/symkey.h>
 #include <botan/version.h>
 #include <botan/filters.h>
+#include <botan/parsing.h>
 
 #if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(2,0,0)
 #include "Botan_ecb.h"

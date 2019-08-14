@@ -44,7 +44,6 @@
 #include <botan/auto_rng.h>
 #include <botan/pkcs8.h>
 #include <botan/bigint.h>
-#include <botan/version.h>
 #include <botan/der_enc.h>
 #include <botan/oids.h>
 
@@ -220,7 +219,6 @@ Botan::Private_Key* crypto_read_file(char* filePath, char* filePIN)
 
 	try
 	{
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		if (filePIN == NULL)
 		{
 			pkey = Botan::PKCS8::load_key(std::string(filePath), *rng);
@@ -229,16 +227,6 @@ Botan::Private_Key* crypto_read_file(char* filePath, char* filePIN)
 		{
 			pkey = Botan::PKCS8::load_key(std::string(filePath), *rng, std::string(filePIN));
 		}
-#else
-		if (filePIN == NULL)
-		{
-			pkey = Botan::PKCS8::load_key(filePath, *rng);
-		}
-		else
-		{
-			pkey = Botan::PKCS8::load_key(filePath, *rng, filePIN);
-		}
-#endif
 	}
 	catch (std::exception& e)
 	{
@@ -640,23 +628,13 @@ ecdsa_key_material_t* crypto_malloc_ecdsa(Botan::ECDSA_PrivateKey* ecdsa)
 		return NULL;
 	}
 
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 	std::vector<Botan::byte> derEC = ecdsa->domain().DER_encode(Botan::EC_DOMPAR_ENC_OID);
 	Botan::secure_vector<Botan::byte> derPoint;
-#else
-	Botan::SecureVector<Botan::byte> derEC = ecdsa->domain().DER_encode(Botan::EC_DOMPAR_ENC_OID);
-	Botan::SecureVector<Botan::byte> derPoint;
-#endif
 
 	try
 	{
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(1,11,0)
 		Botan::secure_vector<Botan::byte> repr = Botan::EC2OSP(ecdsa->public_point(),
 			Botan::PointGFp::UNCOMPRESSED);
-#else
-		Botan::SecureVector<Botan::byte> repr = Botan::EC2OSP(ecdsa->public_point(),
-			Botan::PointGFp::UNCOMPRESSED);
-#endif
 
 		derPoint = Botan::DER_Encoder()
 			.encode(repr, Botan::OCTET_STRING)
