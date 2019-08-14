@@ -139,7 +139,7 @@ bool BotanMacAlgorithm::signFinal(ByteString& signature)
 	}
 
 	// Perform the signature operation
-	Botan::secure_vector<Botan::byte> signResult;
+	Botan::secure_vector<uint8_t> signResult;
 	try
 	{
 		signResult = mac->final();
@@ -250,7 +250,7 @@ bool BotanMacAlgorithm::verifyFinal(ByteString& signature)
 	}
 
 	// Perform the verify operation
-	Botan::secure_vector<Botan::byte> macResult;
+	Botan::secure_vector<uint8_t> macResult;
 	try
 	{
 		macResult = mac->final();

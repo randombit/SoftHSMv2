@@ -148,7 +148,7 @@ bool BotanDSAPrivateKey::PKCS8Decode(const ByteString& ber)
 {
 	Botan::DataSource_Memory source(ber.const_byte_str(), ber.size());
 	if (source.end_of_data()) return false;
-	Botan::secure_vector<Botan::byte> keydata;
+	Botan::secure_vector<uint8_t> keydata;
 	Botan::AlgorithmIdentifier alg_id;
 	Botan::DSA_PrivateKey* key = NULL;
 	try

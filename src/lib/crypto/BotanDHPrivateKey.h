@@ -43,11 +43,11 @@ class BotanDH_PrivateKey : public Botan::DH_PublicKey,
 			   public virtual Botan::DL_Scheme_PrivateKey
 {
 public:
-	std::vector<Botan::byte> public_value() const;
+	std::vector<uint8_t> public_value() const;
 
 	// Constructors
 	BotanDH_PrivateKey(const Botan::AlgorithmIdentifier& alg_id,
-			   const Botan::secure_vector<Botan::byte>& key_bits,
+			   const Botan::secure_vector<uint8_t>& key_bits,
 			   Botan::RandomNumberGenerator& rng);
 
 	BotanDH_PrivateKey(Botan::RandomNumberGenerator& rng,

@@ -161,9 +161,9 @@ ByteString BotanGOSTPrivateKey::PKCS8Encode()
 	if (eckey == NULL) return der;
 	// Force EC_DOMPAR_ENC_OID
 	const size_t PKCS8_VERSION = 0;
-	const std::vector<Botan::byte> parameters = eckey->domain().DER_encode(Botan::EC_DOMPAR_ENC_OID);
+	const std::vector<uint8_t> parameters = eckey->domain().DER_encode(Botan::EC_DOMPAR_ENC_OID);
 	const Botan::AlgorithmIdentifier alg_id(eckey->get_oid(), parameters);
-	const Botan::secure_vector<Botan::byte> ber =
+	const Botan::secure_vector<uint8_t> ber =
 		Botan::DER_Encoder()
 		.start_cons(Botan::SEQUENCE)
 		    .encode(PKCS8_VERSION)
@@ -181,7 +181,7 @@ bool BotanGOSTPrivateKey::PKCS8Decode(const ByteString& ber)
 {
 	Botan::DataSource_Memory source(ber.const_byte_str(), ber.size());
 	if (source.end_of_data()) return false;
-	Botan::secure_vector<Botan::byte> keydata;
+	Botan::secure_vector<uint8_t> keydata;
 	Botan::AlgorithmIdentifier alg_id;
 	Botan::GOST_3410_PrivateKey* key = NULL;
 	try

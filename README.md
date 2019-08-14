@@ -35,7 +35,7 @@ because of the PKCS#11 interface.
 SoftHSM depends on a cryptographic library, Botan or OpenSSL.
 Minimum required versions:
 
-- Botan 2.5.0
+- Botan 2.0.0
 - OpenSSL 1.0.0
 
 The GNU Autotools (Autoconf, Automake, Libtool) are also required for building

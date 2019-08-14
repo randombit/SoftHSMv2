@@ -117,7 +117,7 @@ bool BotanRSA::sign(PrivateKey* privateKey, const ByteString& dataToSign,
 	}
 
 	// Perform the signature operation
-	std::vector<Botan::byte> signResult;
+	std::vector<uint8_t> signResult;
 	try
 	{
 		BotanRNG* rng = (BotanRNG*)BotanCryptoFactory::i()->getRNG();
@@ -378,7 +378,7 @@ bool BotanRSA::signFinal(ByteString& signature)
 	}
 
 	// Perform the signature operation
-	std::vector<Botan::byte> signResult;
+	std::vector<uint8_t> signResult;
 	try
 	{
 		BotanRNG* rng = (BotanRNG*)BotanCryptoFactory::i()->getRNG();
@@ -797,7 +797,7 @@ bool BotanRSA::encrypt(PublicKey* publicKey, const ByteString& data,
 	}
 
 	// Perform the encryption operation
-	std::vector<Botan::byte> encResult;
+	std::vector<uint8_t> encResult;
 	try
 	{
 		BotanRNG* rng = (BotanRNG*)BotanCryptoFactory::i()->getRNG();
@@ -876,7 +876,7 @@ bool BotanRSA::decrypt(PrivateKey* privateKey, const ByteString& encryptedData,
 	}
 
 	// Perform the decryption operation
-	Botan::secure_vector<Botan::byte> decResult;
+	Botan::secure_vector<uint8_t> decResult;
 	try
 	{
 		decResult = decryptor->decrypt(encryptedData.const_byte_str(), encryptedData.size());

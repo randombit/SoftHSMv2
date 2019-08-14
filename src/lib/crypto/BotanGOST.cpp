@@ -169,7 +169,7 @@ bool BotanGOST::signFinal(ByteString& signature)
 	}
 
 	// Perform the signature operation
-	std::vector<Botan::byte> signResult;
+	std::vector<uint8_t> signResult;
 	try
 	{
 		BotanRNG* rng = (BotanRNG*)BotanCryptoFactory::i()->getRNG();

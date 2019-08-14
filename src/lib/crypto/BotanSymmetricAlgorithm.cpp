@@ -43,9 +43,10 @@
 #include <botan/filters.h>
 #include <botan/parsing.h>
 
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(2,0,0)
 #include "Botan_ecb.h"
-#include <botan/cipher_filter.h>
+
+#if BOTAN_VERSION_CODE <= BOTAN_VERSION_CODE_FOR(2,11,0)
+   #include <botan/cipher_filter.h>
 #endif
 
 #ifdef WITH_AES_GCM

@@ -66,9 +66,9 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 			return false;
 		}
 
-		Botan::secure_vector<Botan::byte> data(in.size());
+		Botan::secure_vector<uint8_t> data(in.size());
 		memcpy(data.data(), in.const_byte_str(), in.size());
-		Botan::secure_vector<Botan::byte> wrapped;
+		Botan::secure_vector<uint8_t> wrapped;
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		try
 		{
@@ -89,9 +89,9 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 	else if (mode == SymWrap::AES_KEYWRAP_PAD)
 	{
 		// RFC 5649 AES key wrap with pad
-		Botan::secure_vector<Botan::byte> data(in.size());
+		Botan::secure_vector<uint8_t> data(in.size());
 		memcpy(data.data(), in.const_byte_str(), in.size());
-		Botan::secure_vector<Botan::byte> wrapped;
+		Botan::secure_vector<uint8_t> wrapped;
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		try
 		{
@@ -146,9 +146,9 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 			return false;
 		}
 
-		Botan::secure_vector<Botan::byte> wrapped(in.size());
+		Botan::secure_vector<uint8_t> wrapped(in.size());
 		memcpy(wrapped.data(), in.const_byte_str(), in.size());
-		Botan::secure_vector<Botan::byte> unwrapped;
+		Botan::secure_vector<uint8_t> unwrapped;
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		try
 		{
@@ -182,9 +182,9 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 			return false;
 		}
 
-		Botan::secure_vector<Botan::byte> wrapped(in.size());
+		Botan::secure_vector<uint8_t> wrapped(in.size());
 		memcpy(wrapped.data(), in.const_byte_str(), in.size());
-		Botan::secure_vector<Botan::byte> unwrapped;
+		Botan::secure_vector<uint8_t> unwrapped;
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		try
 		{

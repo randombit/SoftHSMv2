@@ -43,7 +43,7 @@
 #include <botan/oids.h>
 #include <botan/version.h>
 
-std::vector<Botan::byte> BotanDH_PrivateKey::public_value() const
+std::vector<uint8_t> BotanDH_PrivateKey::public_value() const
 {
 	return impl->public_value();
 }
@@ -51,7 +51,7 @@ std::vector<Botan::byte> BotanDH_PrivateKey::public_value() const
 // Redefine of DH_PrivateKey constructor with the correct format
 BotanDH_PrivateKey::BotanDH_PrivateKey(
 			const Botan::AlgorithmIdentifier& alg_id,
-			const Botan::secure_vector<Botan::byte>& key_bits,
+			const Botan::secure_vector<uint8_t>& key_bits,
 			Botan::RandomNumberGenerator& rng) :
 	Botan::DL_Scheme_PrivateKey(alg_id, key_bits, Botan::DL_Group::PKCS3_DH_PARAMETERS)
 {
@@ -155,9 +155,9 @@ ByteString BotanDHPrivateKey::PKCS8Encode()
 	if (dh == NULL) return der;
 	// Force PKCS3_DH_PARAMETERS for p, g and no q.
 	const size_t PKCS8_VERSION = 0;
-	const std::vector<Botan::byte> parameters = dh->impl->get_domain().DER_encode(Botan::DL_Group::PKCS3_DH_PARAMETERS);
+	const std::vector<uint8_t> parameters = dh->impl->get_domain().DER_encode(Botan::DL_Group::PKCS3_DH_PARAMETERS);
 	const Botan::AlgorithmIdentifier alg_id(dh->impl->get_oid(), parameters);
-	const Botan::secure_vector<Botan::byte> ber =
+	const Botan::secure_vector<uint8_t> ber =
 		Botan::DER_Encoder()
 		.start_cons(Botan::SEQUENCE)
 		    .encode(PKCS8_VERSION)
@@ -175,7 +175,7 @@ bool BotanDHPrivateKey::PKCS8Decode(const ByteString& ber)
 {
 	Botan::DataSource_Memory source(ber.const_byte_str(), ber.size());
 	if (source.end_of_data()) return false;
-	Botan::secure_vector<Botan::byte> keydata;
+	Botan::secure_vector<uint8_t> keydata;
 	Botan::AlgorithmIdentifier alg_id;
 	BotanDH_PrivateKey* key = NULL;
 	try
