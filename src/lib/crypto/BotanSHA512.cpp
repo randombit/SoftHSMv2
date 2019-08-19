@@ -40,5 +40,5 @@ int BotanSHA512::getHashSize()
 
 const char* BotanSHA512::getHashName() const
 {
-        return "SHA-512";
+	return "SHA-512";
 }

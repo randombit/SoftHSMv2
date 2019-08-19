@@ -40,5 +40,5 @@ int BotanSHA1::getHashSize()
 
 const char* BotanSHA1::getHashName() const
 {
-        return "SHA-160";
+	return "SHA-1";
 }

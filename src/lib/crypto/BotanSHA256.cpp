@@ -40,5 +40,5 @@ int BotanSHA256::getHashSize()
 
 const char* BotanSHA256::getHashName() const
 {
-        return "SHA-256";
+	return "SHA-256";
 }

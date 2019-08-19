@@ -40,5 +40,5 @@ int BotanMD5::getHashSize()
 
 const char* BotanMD5::getHashName() const
 {
-        return "MD5";
+	return "MD5";
 }
