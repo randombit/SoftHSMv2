@@ -247,10 +247,8 @@ std::string BotanAES::getCipher() const
 		case SymMode::ECB:
 			mode = "ECB";
 			break;
-#ifdef WITH_AES_GCM
 		case SymMode::GCM:
 			return algo + "/GCM(" + std::to_string(currentTagBytes) + ")";
-#endif
 		default:
 			ERROR_MSG("Invalid AES cipher mode %i", currentCipherMode);
 

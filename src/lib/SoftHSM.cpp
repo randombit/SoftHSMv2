@@ -715,9 +715,7 @@ void SoftHSM::prepareSupportedMecahnisms(std::map<std::string, CK_MECHANISM_TYPE
 	t["CKM_AES_CBC"]		= CKM_AES_CBC;
 	t["CKM_AES_CBC_PAD"]		= CKM_AES_CBC_PAD;
 	t["CKM_AES_CTR"]		= CKM_AES_CTR;
-#ifdef WITH_AES_GCM
 	t["CKM_AES_GCM"]		= CKM_AES_GCM;
-#endif
 	t["CKM_AES_KEY_WRAP"]		= CKM_AES_KEY_WRAP;
 #ifdef HAVE_AES_KEY_WRAP_PAD
 	t["CKM_AES_KEY_WRAP_PAD"]	= CKM_AES_KEY_WRAP_PAD;

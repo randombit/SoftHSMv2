@@ -42,6 +42,7 @@
 #include <botan/version.h>
 #include <botan/filters.h>
 #include <botan/parsing.h>
+#include <botan/aead.h>
 
 #include "Botan_ecb.h"
 
@@ -49,9 +50,6 @@
    #include <botan/cipher_filter.h>
 #endif
 
-#ifdef WITH_AES_GCM
-#include <botan/aead.h>
-#endif
 
 // Constructor
 BotanSymmetricAlgorithm::BotanSymmetricAlgorithm()
@@ -149,7 +147,6 @@ bool BotanSymmetricAlgorithm::encryptInit(const SymmetricKey* key, const SymMode
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		if (mode == SymMode::ECB)
 		{
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(2,0,0)
 			// ECB cipher mode was dropped in Botan 2.0
 			const std::vector<std::string> algo_parts = Botan::split_on(cipherName, '/');
 			const std::string cipher_name = algo_parts[0];
@@ -166,11 +163,7 @@ bool BotanSymmetricAlgorithm::encryptInit(const SymmetricKey* key, const SymMode
 			Botan::Keyed_Filter* cipher = new Botan::Cipher_Mode_Filter(new Botan::ECB_Encryption(bc.release(),pad));
 			cipher->set_key(botanKey);
 			cryption = new Botan::Pipe(cipher);
-#else
-			cryption = new Botan::Pipe(Botan::get_cipher(cipherName, botanKey, Botan::ENCRYPTION));
-#endif
 		}
-#ifdef WITH_AES_GCM
 		else if (mode == SymMode::GCM)
 		{
 			Botan::AEAD_Mode* aead = Botan::get_aead(cipherName, Botan::ENCRYPTION);
@@ -182,7 +175,6 @@ bool BotanSymmetricAlgorithm::encryptInit(const SymmetricKey* key, const SymMode
 			filter->set_iv(botanIV);
 			cryption = new Botan::Pipe(filter);
 		}
-#endif
 		else
 		{
 			Botan::InitializationVector botanIV = Botan::InitializationVector(IV.const_byte_str(), IV.size());
@@ -390,7 +382,6 @@ bool BotanSymmetricAlgorithm::decryptInit(const SymmetricKey* key, const SymMode
 		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		if (mode == SymMode::ECB)
 		{
-#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(2,0,0)
 			// ECB cipher mode was dropped in Botan 2.0
 			const std::vector<std::string> algo_parts = Botan::split_on(cipherName, '/');
 			const std::string cipher_name = algo_parts[0];
@@ -407,11 +398,7 @@ bool BotanSymmetricAlgorithm::decryptInit(const SymmetricKey* key, const SymMode
 			Botan::Keyed_Filter* cipher = new Botan::Cipher_Mode_Filter(new Botan::ECB_Decryption(bc.release(),pad));
 			cipher->set_key(botanKey);
 			cryption = new Botan::Pipe(cipher);
-#else
-			cryption = new Botan::Pipe(Botan::get_cipher(cipherName, botanKey, Botan::DECRYPTION));
-#endif
 		}
-#ifdef WITH_AES_GCM
 		else if (mode == SymMode::GCM)
 		{
 			Botan::AEAD_Mode* aead = Botan::get_aead(cipherName, Botan::DECRYPTION);
@@ -423,7 +410,6 @@ bool BotanSymmetricAlgorithm::decryptInit(const SymmetricKey* key, const SymMode
 			filter->set_iv(botanIV);
 			cryption = new Botan::Pipe(filter);
 		}
-#endif
 		else
 		{
 			Botan::InitializationVector botanIV = Botan::InitializationVector(IV.const_byte_str(), IV.size());
