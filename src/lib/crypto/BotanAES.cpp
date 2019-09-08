@@ -36,6 +36,11 @@
 #include <botan/rfc3394.h>
 #include <botan/version.h>
 
+#ifdef HAVE_AES_KEY_WRAP_PAD
+   #include <botan/nist_keywrap.h>
+   #include <botan/block_cipher.h>
+#endif
+
 // Wrap/Unwrap keys
 bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out)
 {
@@ -88,14 +93,15 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 #ifdef HAVE_AES_KEY_WRAP_PAD
 	else if (mode == SymWrap::AES_KEYWRAP_PAD)
 	{
-		// RFC 5649 AES key wrap with pad
-		Botan::secure_vector<uint8_t> data(in.size());
-		memcpy(data.data(), in.const_byte_str(), in.size());
-		Botan::secure_vector<uint8_t> wrapped;
-		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		try
 		{
-			wrapped = Botan::rfc5649_keywrap(data, botanKey);
+			const std::string aes_name = "AES-" + std::to_string(key->getKeyBits().size()*8);
+			auto aes = Botan::BlockCipher::create_or_throw(aes_name);
+			aes->set_key(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
+			std::vector<uint8_t> wrapped = Botan::nist_key_wrap_padded(in.const_byte_str(), in.size(), *aes);
+			out.resize(wrapped.size());
+			memcpy(&out[0], wrapped.data(), out.size());
+			return true;
 		}
 		catch (...)
 		{
@@ -103,11 +109,8 @@ bool BotanAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const 
 
 			return false;
 		}
-		out.resize(wrapped.size());
-		memcpy(&out[0], wrapped.data(), out.size());
-
-		return  true;
-	}
+		return true;
+        }
 #endif
 	else
 	{
@@ -181,25 +184,23 @@ bool BotanAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, cons
 
 			return false;
 		}
-
-		Botan::secure_vector<uint8_t> wrapped(in.size());
-		memcpy(wrapped.data(), in.const_byte_str(), in.size());
-		Botan::secure_vector<uint8_t> unwrapped;
-		Botan::SymmetricKey botanKey = Botan::SymmetricKey(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
 		try
 		{
-			unwrapped = Botan::rfc5649_keyunwrap(wrapped, botanKey);
+			const std::string aes_name = "AES-" + std::to_string(key->getKeyBits().size()*8);
+			auto aes = Botan::BlockCipher::create_or_throw(aes_name);
+			aes->set_key(key->getKeyBits().const_byte_str(), key->getKeyBits().size());
+                        auto wrapped = Botan::nist_key_unwrap_padded(in.const_byte_str(), in.size(), *aes);
+			out.resize(wrapped.size());
+			memcpy(&out[0], wrapped.data(), out.size());
+			return true;
 		}
 		catch (...)
 		{
-			ERROR_MSG("AES key unwrap failed");
+			ERROR_MSG("AES key wrap failed");
 
 			return false;
 		}
-		out.resize(unwrapped.size());
-		memcpy(&out[0], unwrapped.data(), out.size());
-
-		return  true;
+		return true;
 	}
 #endif
 	else

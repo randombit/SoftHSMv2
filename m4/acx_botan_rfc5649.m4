@@ -12,15 +12,16 @@ AC_DEFUN([ACX_BOTAN_RFC5649],[
 	AC_LANG_PUSH([C++])
 	AC_LINK_IFELSE([
 		AC_LANG_SOURCE([[
-			#include <botan/rfc3394.h>
+			#include <botan/nist_keywrap.h>
+			#include <botan/block_cipher.h>
 			#include <botan/version.h>
 			int main()
 			{
 				using namespace Botan;
-
-				secure_vector<byte> key(10);
-				SymmetricKey kek("AABB");
-				secure_vector<byte> x = rfc5649_keywrap(key, kek);
+				std::unique_ptr<BlockCipher> aes = BlockCipher::create_or_throw("AES-128");
+				aes->set_key(std::vector<uint8_t>(16));
+				uint8_t input[4] = { 1,2,3,4 };
+				std::vector<uint8_t> wrapped = nist_key_wrap_padded(input, sizeof(input), *aes);
 				return 1;
 			}
 		]])
