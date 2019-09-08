@@ -41,6 +41,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <botan/version.h>
 #include <botan/auto_rng.h>
 #include <botan/pkcs8.h>
 #include <botan/bigint.h>
@@ -633,8 +634,12 @@ ecdsa_key_material_t* crypto_malloc_ecdsa(Botan::ECDSA_PrivateKey* ecdsa)
 
 	try
 	{
+#if BOTAN_VERSION_CODE >= BOTAN_VERSION_CODE_FOR(2,5,0)
+		std::vector<uint8_t> repr = ecdsa->public_point().encode(Botan::PointGFp::UNCOMPRESSED);
+#else
 		Botan::secure_vector<Botan::byte> repr = Botan::EC2OSP(ecdsa->public_point(),
 			Botan::PointGFp::UNCOMPRESSED);
+#endif
 
 		derPoint = Botan::DER_Encoder()
 			.encode(repr, Botan::OCTET_STRING)

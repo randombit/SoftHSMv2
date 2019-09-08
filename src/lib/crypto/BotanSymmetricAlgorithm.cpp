@@ -41,7 +41,6 @@
 #include <botan/symkey.h>
 #include <botan/version.h>
 #include <botan/filters.h>
-#include <botan/parsing.h>
 #include <botan/aead.h>
 
 #include "Botan_ecb.h"
@@ -49,6 +48,30 @@
 #if BOTAN_VERSION_CODE <= BOTAN_VERSION_CODE_FOR(2,11,0)
    #include <botan/cipher_filter.h>
 #endif
+
+std::vector<std::string> split_on_delim(const std::string& str, char delim)
+   {
+   std::vector<std::string> elems;
+   if(str.empty()) return elems;
+
+   std::string substr;
+   for(auto i = str.begin(); i != str.end(); ++i)
+      {
+      if(*i == delim)
+         {
+         if(!substr.empty())
+            elems.push_back(substr);
+         substr.clear();
+         }
+      else
+         substr += *i;
+      }
+
+   if(!substr.empty())
+      elems.push_back(substr);
+
+   return elems;
+   }
 
 
 // Constructor
@@ -148,19 +171,19 @@ bool BotanSymmetricAlgorithm::encryptInit(const SymmetricKey* key, const SymMode
 		if (mode == SymMode::ECB)
 		{
 			// ECB cipher mode was dropped in Botan 2.0
-			const std::vector<std::string> algo_parts = Botan::split_on(cipherName, '/');
+			const std::vector<std::string> algo_parts = split_on_delim(cipherName, '/');
 			const std::string cipher_name = algo_parts[0];
-			Botan::BlockCipherModePaddingMethod* pad;
+                        bool with_pkcs7_padding;
 			if (algo_parts.size() == 3 && algo_parts[2] == "PKCS7")
 			{
-				pad = new Botan::PKCS7_Padding();
+				with_pkcs7_padding = true;
 			}
 			else
 			{
-				pad = new Botan::Null_Padding();
+				with_pkcs7_padding = false;
 			}
 			std::unique_ptr<Botan::BlockCipher> bc(Botan::BlockCipher::create(cipher_name));
-			Botan::Keyed_Filter* cipher = new Botan::Cipher_Mode_Filter(new Botan::ECB_Encryption(bc.release(),pad));
+			Botan::Keyed_Filter* cipher = new Botan::Cipher_Mode_Filter(new Botan::ECB_Encryption(bc.release(), with_pkcs7_padding));
 			cipher->set_key(botanKey);
 			cryption = new Botan::Pipe(cipher);
 		}
@@ -383,19 +406,19 @@ bool BotanSymmetricAlgorithm::decryptInit(const SymmetricKey* key, const SymMode
 		if (mode == SymMode::ECB)
 		{
 			// ECB cipher mode was dropped in Botan 2.0
-			const std::vector<std::string> algo_parts = Botan::split_on(cipherName, '/');
+			const std::vector<std::string> algo_parts = split_on_delim(cipherName, '/');
 			const std::string cipher_name = algo_parts[0];
-			Botan::BlockCipherModePaddingMethod* pad;
+                        bool with_pkcs7_padding;
 			if (algo_parts.size() == 3 && algo_parts[2] == "PKCS7")
 			{
-				pad = new Botan::PKCS7_Padding();
+				with_pkcs7_padding = true;
 			}
 			else
 			{
-				pad = new Botan::Null_Padding();
+				with_pkcs7_padding = false;
 			}
 			std::unique_ptr<Botan::BlockCipher> bc(Botan::BlockCipher::create(cipher_name));
-			Botan::Keyed_Filter* cipher = new Botan::Cipher_Mode_Filter(new Botan::ECB_Decryption(bc.release(),pad));
+			Botan::Keyed_Filter* cipher = new Botan::Cipher_Mode_Filter(new Botan::ECB_Decryption(bc.release(),with_pkcs7_padding));
 			cipher->set_key(botanKey);
 			cryption = new Botan::Pipe(cipher);
 		}
